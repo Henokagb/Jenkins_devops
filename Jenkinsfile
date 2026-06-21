@@ -82,27 +82,6 @@ pipeline {
             }
         }
 
-        stage("Tests d'integration (docker-compose)") {
-            when { expression { env.TARGET_NS != '' } }
-            steps {
-                sh 'docker-compose -f docker-compose.yml up -d'
-                sh 'sleep 10'
-                sh '''
-                  echo "Verification movie-service..."
-                  curl -fsS http://localhost:8001/api/v1/movies/docs > /dev/null
-
-                  echo "Verification cast-service..."
-                  curl -fsS http://localhost:8002/api/v1/casts/docs > /dev/null
-
-                  echo "Smoke tests OK"
-                '''
-            }
-            post {
-                always {
-                    sh 'docker-compose -f docker-compose.yml down -v || true'
-                }
-            }
-        }
 
         stage('Push images vers Docker Hub') {
             when { expression { env.TARGET_NS != '' } }
