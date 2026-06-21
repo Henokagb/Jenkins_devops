@@ -23,6 +23,9 @@ pipeline {
             steps {
                 checkout scm
                 script {
+                    if (!env.BRANCH_NAME) {
+                        env.BRANCH_NAME = env.GIT_BRANCH ? env.GIT_BRANCH.replaceFirst(/^.*\//, '') : env.GIT_BRANCH
+                    }
                     env.GIT_SHORT_SHA = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
                     env.IMAGE_TAG     = "${env.BUILD_NUMBER}-${env.GIT_SHORT_SHA}"
                     echo "Branche : ${env.BRANCH_NAME} | Tag image : ${env.IMAGE_TAG}"
