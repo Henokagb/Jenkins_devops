@@ -37,8 +37,8 @@ pipeline {
                         'develop': [ns: 'dev',     auto: true,  moviePort: 30001, castPort: 30002],
                         'QA'     : [ns: 'qa',      auto: true,  moviePort: 30003, castPort: 30004],
                         'staging': [ns: 'staging', auto: true,  moviePort: 30005, castPort: 30006],
-                        'main' : [ns: 'prod',    auto: false, moviePort: 30007, castPort: 30008],
-                        'main' : [ns: 'prod',    auto: false, moviePort: 30007, castPort: 30008],
+                        'Master' : [ns: 'prod',    auto: false, moviePort: 30007, castPort: 30008],
+                        'Master' : [ns: 'prod',    auto: false, moviePort: 30007, castPort: 30008],
                     ]
 
                     def cfg = envMap[env.BRANCH_NAME]
