@@ -10,8 +10,7 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
-imagePullSecrets: 
-  - name: "regcred"
+imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
@@ -42,6 +41,12 @@ service:
   port: 80
   nodePort: 30007  
   targetPort: 8000
+
+# Chemin utilise par les liveness/readiness probes et le helm test.
+# Toujours surcharge par le Jenkinsfile via --set probePath=... (different pour
+# movie-service et cast-service). Cette valeur par defaut ne sert que de filet de
+# securite si jamais le chart est installe sans cette option.
+probePath: /api/v1/movies/docs
 
 ingress:
   enabled: false
