@@ -42,11 +42,11 @@ service:
   nodePort: 30007  
   targetPort: 8000
 
-# Chemin utilise par les liveness/readiness probes et le helm test.
-# Toujours surcharge par le Jenkinsfile via --set probePath=... (different pour
-# movie-service et cast-service). Cette valeur par defaut ne sert que de filet de
-# securite si jamais le chart est installe sans cette option.
 probePath: /api/v1/movies/docs
+
+# Variables d'environnement du conteneur applicatif (DATABASE_URI, etc.).
+# Toujours fournies par le Jenkinsfile via --set env[0].name=... --set env[0].value=...
+env: []
 
 ingress:
   enabled: false

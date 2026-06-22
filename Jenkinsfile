@@ -152,18 +152,31 @@ pipeline {
 def deployToNamespace(String namespace, String moviePort, String castPort) {
     withCredentials([file(credentialsId: env.KUBECONFIG_CRED_ID, variable: 'KUBECONFIG')]) {
         sh """
+          kubectl apply -f k8s/postgres.yaml -n ${namespace}
+ 
+          kubectl rollout status deployment/movie-db -n ${namespace} --timeout=2m
+          kubectl rollout status deployment/cast-db  -n ${namespace} --timeout=2m
+ 
           helm upgrade --install movie-service ${env.CHART_PATH} \
             --namespace ${namespace} --create-namespace \
             --set image.repository=${env.MOVIE_IMAGE} \
             --set image.tag=${env.IMAGE_TAG} \
             --set service.nodePort=${moviePort} \
+            --set probePath=/api/v1/movies/docs \
+            --set 'env[0].name=DATABASE_URI' \
+            --set 'env[0].value=postgresql://movie_db_username:movie_db_password@movie-db/movie_db_dev' \
+            --set 'env[1].name=CAST_SERVICE_HOST_URL' \
+            --set 'env[1].value=http://cast-service-fastapiapp:8000/api/v1/casts/' \
             --wait --timeout 3m
-
+ 
           helm upgrade --install cast-service ${env.CHART_PATH} \
             --namespace ${namespace} --create-namespace \
             --set image.repository=${env.CAST_IMAGE} \
             --set image.tag=${env.IMAGE_TAG} \
             --set service.nodePort=${castPort} \
+            --set probePath=/api/v1/casts/docs \
+            --set 'env[0].name=DATABASE_URI' \
+            --set 'env[0].value=postgresql://cast_db_username:cast_db_password@cast-db/cast_db_dev' \
             --wait --timeout 3m
         """
     }
